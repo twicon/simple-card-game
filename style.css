@@ -14,9 +14,19 @@ body {
 .card {
     background-color: #f0f0f0;
     height: 100px;
+    width: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 24px;
     cursor: pointer;
+    position: relative;
+}
+
+.card-image {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
 }

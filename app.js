@@ -69,25 +69,31 @@ function checkForMatch(secondCard, secondCardElement) {
     if (firstCard.pair === secondCard.pair) {
         // It's a match
         firstCard.matched = secondCard.matched = true;
-        updateScore();
+        updateScore(true); // Pass true for a match
         resetBoard();
     } else {
-        // No match, hide cards again after a short delay
+        // No match
         setTimeout(() => {
             firstCardElement.textContent = '';
             secondCardElement.textContent = '';
+            updateScore(false); // Pass false for no match
             resetBoard();
         }, 1000);
     }
 }
 
-function updateScore() {
-    if (currentPlayer === 1) {
-        player1Score++;
-        document.getElementById('player1Score').textContent = player1Score;
+function updateScore(isMatch) {
+    if (isMatch) {
+        if (currentPlayer === 1) {
+            player1Score++;
+            document.getElementById('player1Score').textContent = player1Score;
+        } else {
+            player2Score++;
+            document.getElementById('player2Score').textContent = player2Score;
+        }
+        // Player gets another turn, so no need to call updateTurn()
     } else {
-        player2Score++;
-        document.getElementById('player2Score').textContent = player2Score;
+        updateTurn(); // Switch turn only if there's no match
     }
 }
 

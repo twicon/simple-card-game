@@ -21,13 +21,19 @@ const cardObjects = [
     { id: 'H2', pair: 'H', matched: false },
 ];
 
-// Shuffle the cardObjects
 function shuffle(array) {
     array.sort(() => Math.random() - 0.5);
 }
 
 function initGame() {
+    player1Score = 0;
+    player2Score = 0;
+    currentPlayer = 1;
+    updateScores();
+
     shuffle(cardObjects);
+    cardObjects.forEach(card => card.matched = false); // Reset match status
+
     const gameBoard = document.getElementById('gameBoard');
     gameBoard.innerHTML = ''; // Clear the board
 
@@ -46,14 +52,14 @@ function initGame() {
 
 let firstCard = null;
 let firstCardElement = null;
-let lockBoard = false; // Used to lock the board during checks
+let lockBoard = false;
 
 function flipCard(card, cardElement) {
     if (lockBoard || card.matched || cardElement === firstCardElement) {
-        return; // Ignore clicks if the board is locked, card is already matched, or it's the same card
+        return;
     }
 
-    cardElement.textContent = card.pair; // Show card value
+    cardElement.textContent = card.pair;
 
     if (!firstCard) {
         firstCard = card;
@@ -64,19 +70,18 @@ function flipCard(card, cardElement) {
 }
 
 function checkForMatch(secondCard, secondCardElement) {
-    lockBoard = true; // Lock the board to prevent further flips
+    lockBoard = true;
 
     if (firstCard.pair === secondCard.pair) {
-        // It's a match
         firstCard.matched = secondCard.matched = true;
-        updateScore(true); // Pass true for a match
+        updateScore(true);
         resetBoard();
+        checkGameOver(); // Check if game is over after each match
     } else {
-        // No match
         setTimeout(() => {
             firstCardElement.textContent = '';
             secondCardElement.textContent = '';
-            updateScore(false); // Pass false for no match
+            updateScore(false);
             resetBoard();
         }, 1000);
     }
@@ -91,9 +96,8 @@ function updateScore(isMatch) {
             player2Score++;
             document.getElementById('player2Score').textContent = player2Score;
         }
-        // Player gets another turn, so no need to call updateTurn()
     } else {
-        updateTurn(); // Switch turn only if there's no match
+        updateTurn();
     }
 }
 
@@ -102,9 +106,21 @@ function updateTurn() {
 }
 
 function resetBoard() {
-    // Reset board and card variables
     [firstCard, firstCardElement] = [null, null];
     lockBoard = false;
+}
+
+function checkGameOver() {
+    if (cardObjects.every(card => card.matched)) {
+        const winner = player1Score === player2Score ? 'Tie game!' : player1Score > player2Score ? 'Player 1 wins!' : 'Player 2 wins!';
+        alert(winner + ' Click OK to restart.');
+        initGame(); // Restart the game
+    }
+}
+
+function updateScores() {
+    document.getElementById('player1Score').textContent = player1Score;
+    document.getElementById('player2Score').textContent = player2Score;
 }
 
 initGame();
